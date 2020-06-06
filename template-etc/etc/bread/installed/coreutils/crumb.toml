@@ -1,0 +1,15 @@
+[package]
+name        = "coreutils"
+description = "The GNU Core Utilities are the basic file, shell and text manipulation utilities of the GNU operating system."
+version     = "8.32"
+license     = "GPLv3"
+homepage    = [ "https://www.gnu.org/software/coreutils/" ]
+authors     = [ "GNU Project" ]
+
+[scripts]
+install   = "./install.sh"
+uninstall = "./uninstall.sh"
+build     = "./build.sh"
+
+[dependencies]
+libc = "^1.0"

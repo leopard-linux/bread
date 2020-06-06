@@ -1,0 +1,5 @@
+[settings]
+log-level = "info" # Log level by default
+
+[frozen-crumbs] # can be overriten by `bread update --force package_name`
+bread = true # it would be bad if bread would break

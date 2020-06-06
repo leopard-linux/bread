@@ -1,0 +1,5 @@
+template-server/
+tmp/
+target/
+.idea/
+.vscode/

@@ -1,0 +1,6 @@
+[mirror]
+de  = { url = "https://mirror.mempler.de", database = "leopard", branch = "daily" }
+all = { url = "https://mirror.mempler.de", database = "leopard", branch = "daily" }
+
+[mirror]
+all = { url = "https://mirror.mempler.de", database = "core", branch = "daily" }

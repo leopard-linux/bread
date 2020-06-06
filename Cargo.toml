@@ -1,0 +1,29 @@
+[package]
+name = "bread"
+version = "1.0.0"
+authors = ["Robin A. P. <me@mempler.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+console = "0.11.3"
+flate2 = "1.0.14"
+hex = "0.4.2"
+hyper = "0.13.6"
+hyper-tls = "0.4.1"
+indicatif = { git="https://github.com/leopard-linux/indicatif" }
+libc = "0.2.71"
+log = "0.4.8"
+nix = "0.17.0"
+sha2 = "0.8.2"
+tar = "0.4.28"
+tokio = { version = "0.2", features = ["full"] }
+iovec = "0.1.4"
+pretty_env_logger = "0.4.0"
+num_cpus = "1.13.0"
+futures = "0.3.5"
+clap = "2.33.1"
+
+[profile.release]
+debug = true
