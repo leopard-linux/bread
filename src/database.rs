@@ -10,7 +10,7 @@ use std::time::Instant;
 
 use sha2::{Sha512, Digest};
 
-use log::{info, error};
+use log::{trace, info, error};
 
 use flate2::Compression;
 use flate2::write::GzEncoder;
@@ -76,9 +76,8 @@ impl DatabaseEntry {
 #[allow(dead_code)]
 impl Database {
     pub fn save_to_file<P: AsRef<Path>>(&self, path: P) {
-        let path = path.as_ref();
-
-        let file = fs::File::create(path.join(self.name.to_owned() + ".db.gz")).unwrap();
+        let path = path.as_ref().join(self.name.to_owned() + ".db.gz");
+        let file = fs::File::create(&path).unwrap();
         
         let mut end_db_str = String::default();
         end_db_str.push_str("VERSION_1_0\n");
@@ -86,8 +85,10 @@ impl Database {
             end_db_str.push_str(format!("{}-{} {} {}\n", entry.name, entry.version, entry.size, entry.checksum).as_str());
         }
 
+        trace!("Saving to {}", pkg_name(path.to_str().unwrap()));
+
         let mut enc = GzEncoder::new(file, Compression::new(9));
-        enc.write_all(end_db_str.as_bytes());
+        enc.write_all(end_db_str.as_bytes()).unwrap(); // TODO: check for error
         enc.finish().unwrap(); // TODO: check for error
     }
 
@@ -105,7 +106,7 @@ impl Database {
         let mut buf = String::default();
         file.read_to_string(&mut buf).unwrap(); // TODO: check for errors
 
-        info!("Done in {}ms", now.elapsed().as_millis());
+        info!("Done, took {}ms", now.elapsed().as_millis());
 
         Database::from_string(name, buf)
     }

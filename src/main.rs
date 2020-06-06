@@ -6,6 +6,7 @@ mod constants;
 mod crumble;
 
 use clap::{App, Arg, SubCommand, AppSettings};
+use crate::constants::PATH_CONFIGS;
 
 #[tokio::main]
 async fn main() {
@@ -42,9 +43,10 @@ async fn main() {
         Some(c) => {
             match c {
                 "update" => {
+                    // TODO: use multiple mirrors
                     let db = database::Database::from_mirror("https://mirror.mempler.de".to_string(), "leopard").await;
 
-                    println!("{:#?}", db);
+                    db.save_to_file(PATH_CONFIGS.to_string() + "/databases");
                 }
 
                 _ => println!("{}", matches.usage())
