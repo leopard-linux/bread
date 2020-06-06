@@ -13,7 +13,8 @@ use crate::constants::PATH_CACHE;
 use indicatif::{ProgressBar, MultiProgress, TickTimeLimit, ProgressDrawTarget};
 
 async fn save_to_file(file_name: &str, pb: &ProgressBar, res: &mut Response<Body>, mpb: Option<&MultiProgress>) -> File {
-    let mut file = File::create(PATH_CACHE.to_string() + "/" + file_name).unwrap(); // TODO: print an error instead of crashing
+    let file_path = Path::new(PATH_CACHE).join(file_name);
+    let mut file = File::create(&file_path).unwrap(); // TODO: print an error instead of crashing
 
     while let Some(next) = res.data().await {
         let chunk = next.unwrap();
@@ -31,15 +32,17 @@ async fn save_to_file(file_name: &str, pb: &ProgressBar, res: &mut Response<Body
         let mpb = mpb.unwrap();
         mpb.clear().unwrap();
         mpb.set_draw_target(ProgressDrawTarget::hidden());
-        trace!("Saving to {}", pkg_name((PATH_CACHE.to_string() + "/" + file_name).as_str()));
+        trace!("Saving to {}", pkg_name(file_path.to_str().unwrap()));
         mpb.set_draw_target(ProgressDrawTarget::stdout());
     }
 
-    File::open(PATH_CACHE.to_string() + "/" + file_name).unwrap()
+    File::open(file_path).unwrap()
 }
 
-pub async fn download_file(uri: String) -> Option<File> {
-    trace!("Downloading {}", pkg_name(uri.as_str()));
+pub async fn download_file<S: AsRef<str>>(uri: S) -> Option<File> {
+    let uri = uri.as_ref();
+
+    trace!("Downloading {}", pkg_name(uri));
 
     //let mut written = 0;
     let url = uri.parse::<hyper::Uri>().unwrap();
@@ -70,24 +73,24 @@ pub struct MultiDownloadResult {
     pub name: String
 }
 
-#[allow(dead_code)]
-pub async fn download_files(uris: Vec<String>) -> Vec<Option<MultiDownloadResult>> {
+pub async fn download_files<S: AsRef<str>>(uris: Vec<S>) -> Vec<Option<MultiDownloadResult>> {
     let mpb = MultiProgress::new();
 
     let mut futures = vec![];
     for url in uris {
         let future = async {
-            let moved_url = url;
+            let url = url;
+            let url_ref = url.as_ref();
 
             mpb.clear().unwrap();
             mpb.set_draw_target(ProgressDrawTarget::hidden());
-            trace!("Downloading {}", pkg_name(moved_url.as_str()));
+            trace!("Downloading {}", pkg_name(url_ref));
             mpb.set_draw_target(ProgressDrawTarget::stdout());
 
-            let uri = moved_url.parse::<hyper::Uri>().unwrap(); // TODO: check for error
+            let uri = url_ref.parse::<hyper::Uri>().unwrap(); // TODO: check for error
 
             let tmp_path = uri.path().to_string();
-            let url_path = Path::new(tmp_path.as_str());
+            let url_path = Path::new(&tmp_path);
             let file_name = url_path.file_name().unwrap().to_str().unwrap(); // TODO: check for error
 
             let https = HttpsConnector::new();

@@ -1,8 +1,8 @@
 use console::style;
 use indicatif::{ProgressStyle};
 
-pub fn pkg_name(name: &str) -> String {
-    format!("{}", style(name).red())
+pub fn pkg_name<S: AsRef<str>>(name: S) -> String {
+    format!("{}", style(name.as_ref()).red())
 }
 
 pub fn download_pg_style() -> ProgressStyle {

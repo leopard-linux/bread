@@ -72,7 +72,7 @@ async fn main() {
 
             .subcommand(SubCommand::with_name("update")
                 .setting(AppSettings::ColoredHelp)
-                .about("Updates the crumble cache database"))
+                .about("Updates the package cache database(s)"))
 
             .subcommand(SubCommand::with_name("upgrade")
                 .setting(AppSettings::ColoredHelp)
@@ -98,7 +98,7 @@ async fn main() {
             match c {
                 "update" => {
                     // TODO: use multiple mirrors
-                    let db = database::Database::from_mirror("https://mirror.mempler.de".to_string(), "leopard").await;
+                    let db = database::Database::from_mirror("https://mirror.mempler.de", "leopard").await;
 
                     db.save_to_file(PATH_CONFIGS.to_string() + "/databases");
                 }

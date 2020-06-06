@@ -37,7 +37,6 @@ pub struct Database {
     pub entries: Vec<DatabaseEntry>
 }
 
-#[allow(dead_code)]
 impl DatabaseEntry {
     pub async fn from_file<P: AsRef<Path>>(path: P) -> DatabaseEntry {
         let path = path.as_ref();
@@ -73,7 +72,6 @@ impl DatabaseEntry {
     }
 }
 
-#[allow(dead_code)]
 impl Database {
     pub fn save_to_file<P: AsRef<Path>>(&self, path: P) {
         let path = path.as_ref().join(self.name.to_owned() + ".db.gz");
@@ -92,12 +90,20 @@ impl Database {
         enc.finish().unwrap(); // TODO: check for error
     }
 
-    pub async fn from_mirror(uri: String, name: &str) -> Database {
+    pub async fn from_mirror<S: AsRef<str>, SI: AsRef<str>>(uri: S, name: SI) -> Database {
+        let name = name.as_ref();
+        let uri = uri.as_ref();
+
         let now = Instant::now();
         
         info!("Fetching {}", pkg_name(name));
 
-        let gz = crate::net::download_file(uri + "/" + name + ".db.gz").await.unwrap(); // TODO: check for error
+        let mut database_url = uri.to_string();
+        database_url.push_str("/");
+        database_url.push_str(name);
+        database_url.push_str(".db.gz");
+
+        let gz = crate::net::download_file(database_url).await.unwrap(); // TODO: check for error
         // TODO: verify SHA512
 
         info!("Extracting {}", pkg_name(name));
@@ -111,7 +117,10 @@ impl Database {
         Database::from_string(name, buf)
     }
 
-    pub fn from_string(name: &str, data: String) -> Database {
+    pub fn from_string<S: AsRef<str>, SI: AsRef<str>>(name: S, data: SI) -> Database {
+        let name = name.as_ref();
+        let data = data.as_ref();
+
         let database_rows = data.lines();
 
         let mut db_major = 0;
