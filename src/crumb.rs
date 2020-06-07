@@ -8,7 +8,7 @@ use serde::Deserialize;
 
 use flate2::write::GzEncoder;
 use tar::Builder as TarBuilder;
-use flate2::{Compress, Compression};
+use flate2::Compression;
 
 use crate::style::pkg_name;
 use std::process::Command;
