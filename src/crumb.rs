@@ -118,7 +118,7 @@ impl Crumb {
         package_name += info.package.name.as_str();
         package_name += "@";
         package_name += info.package.version.to_string().as_str();
-        package_name += ".tar.gz";
+        package_name += ".crumb";
 
         if info.scripts.build.is_some() {
             let build_script = info.scripts.build.unwrap();
