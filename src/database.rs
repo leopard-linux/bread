@@ -1,7 +1,7 @@
 // a bread database is super simple, basically
-// $NAME-$VERSION $BYTE_SIZE $FILE_SHA512 
-// it is required to be a .tar.gz
-// a file name would be (database_name).db.tar.gz
+// $NAME@$VERSION $BYTE_SIZE $FILE_SHA512
+// it is required to be a .gz
+// a file name would be (database_name).db.gz
 // the database would be extracted on the disk at /var/bread/database/{database_name}.db
 
 use std::fs;
@@ -48,7 +48,7 @@ impl DatabaseEntry {
         let hash = hex::encode(sha512.result());
 
         let file_name = path.file_name().unwrap().to_str().unwrap();
-        let file_name_s: Vec<&str> = file_name.split("-").collect();
+        let file_name_s: Vec<&str> = file_name.split("@").collect();
 
         let name = file_name_s[0]; // TODO: log an error if file name is in the wrong format
         let version = file_name_s[1].replace(".crumb", "");
@@ -144,7 +144,7 @@ impl Database {
             let mut entry = DatabaseEntry::new();
 
             if db_major >= 1 && db_minor >= 0 {
-                let name_version: Vec<&str> = row_split.next().unwrap().splitn(2, "-").collect();
+                let name_version: Vec<&str> = row_split.next().unwrap().splitn(2, "@").collect();
 
                 entry.name = name_version[0].to_string();
                 entry.size = row_split.next().unwrap().parse().unwrap(); // TODO: instead of crashing, show the error cause.
