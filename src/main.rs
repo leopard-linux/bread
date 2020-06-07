@@ -3,7 +3,8 @@ mod net;
 mod utils;
 mod style;
 mod constants;
-mod crumble;
+mod crumb;
+mod mirror;
 
 use clap::{App, Arg, SubCommand, AppSettings};
 use crate::constants::PATH_CONFIGS;
@@ -62,8 +63,12 @@ async fn main() {
 
             .subcommand(SubCommand::with_name("bake")
                 .setting(AppSettings::ColoredHelp)
-                .setting(AppSettings::SubcommandRequiredElseHelp)
-                .about("Bakes a package into an .crumb file"))
+                .about("Bakes a package into a .crumb file")
+                .arg(Arg::with_name("directory")
+                    .help("Input directory of the package")
+                    .default_value(".")
+                )
+            )
 
             .subcommand(SubCommand::with_name("install")
                 .setting(AppSettings::ColoredHelp)
@@ -101,6 +106,12 @@ async fn main() {
                     let db = database::Database::from_mirror("https://mirror.mempler.de", "leopard").await;
 
                     db.save_to_file(PATH_CONFIGS.to_string() + "/databases");
+                }
+
+                "bake" => {
+                    let raw_path = matches.subcommand().1.unwrap().value_of("directory").unwrap();
+
+                    crumb::Crumb::bake_package(raw_path);
                 }
 
                 _ => println!("{}", matches.usage())
