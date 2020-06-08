@@ -20,6 +20,7 @@ use indicatif::{ProgressBar, MultiProgress, TickTimeLimit, ProgressDrawTarget};
 
 use crate::style::{pkg_name, install_pg_style};
 use std::io::{Read, Write};
+use std::cmp::Ordering;
 
 #[derive(Debug, Clone)]
 pub struct DatabaseEntry {
@@ -208,5 +209,25 @@ impl Database {
             name: name.to_string(),
             entries: database_entries
         }
+    }
+
+    // Query through all databases in path
+    // folder structure must look as followed:
+    //
+    //  /x86_64/{db_name}.gz
+    //  /i686/{db_name}.gz
+    //
+    pub fn query<P: AsRef<Path>, S: AsRef<str>, SI: AsRef<str>>(path: P, pkg_name: S, architecture: SI) {
+        let dir = path.as_ref().join(architecture.as_ref()).as_path();
+    }
+
+    pub fn query_s<S: AsRef<str>, SI: AsRef<str>>(&self, pkg_name: S, architecture: SI) -> Option<&DatabaseEntry> {
+        for entry in &self.entries {
+            if entry.name == pkg_name.as_ref() {
+                return Some(entry);
+            }
+        }
+
+        None
     }
 }

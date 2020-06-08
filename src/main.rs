@@ -114,6 +114,10 @@ async fn main() {
                     crumb::Crumb::bake_package(raw_path);
                 }
 
+                "strip" => {
+
+                }
+
                 _ => println!("{}", matches.usage())
             }
         }

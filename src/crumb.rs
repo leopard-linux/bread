@@ -95,9 +95,7 @@ impl CrumbInfo {
     }
 }
 
-pub struct Crumb {
-
-}
+pub struct Crumb;
 
 impl Crumb {
     pub fn bake_package<P: AsRef<Path>>(path: P) {
@@ -133,7 +131,7 @@ impl Crumb {
                 .expect("failed to execute process");
         }
 
-        log::trace!("Opening {}", package_name);
+        log::trace!("Opening {}", pkg_name(&package_name));
         let tar_gz = File::create(path.join(&package_name)).unwrap(); // TODO: check for error
 
         let gz = GzEncoder::new(tar_gz, Compression::best());
@@ -167,6 +165,17 @@ impl Crumb {
                 tar.append_path_with_name(file.path(), file_name).unwrap();
             }
         }
+
+        log::info!("{} created at {}", pkg_name(package_name), pkg_name(path.to_str().unwrap()));
+    }
+
+    pub async fn cache_package<S: AsRef<str>>(name: S) -> Option<File> {
+        //let db = crate::database::Database::from_mirror()
+
+        None
+    }
+
+    pub async fn install_package<P: AsRef<Path>>(path: P) {
     }
 }
 
